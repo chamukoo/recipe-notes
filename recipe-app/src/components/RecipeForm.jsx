@@ -30,7 +30,7 @@ const RecipeForm = ({ addRecipe, editRecipe, currentRecipe, onClose }) => {
     setIngredients([...ingredients, { name: '', price: '' }]);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const totalCost = ingredients.reduce((total, item) => {
@@ -48,9 +48,9 @@ const RecipeForm = ({ addRecipe, editRecipe, currentRecipe, onClose }) => {
     };
 
     if (currentRecipe) {
-      editRecipe(newRecipe);
+      await editRecipe(newRecipe);
     } else {
-      addRecipe(newRecipe);
+      await addRecipe(newRecipe);
     }
 
     onClose();
@@ -93,7 +93,7 @@ const RecipeForm = ({ addRecipe, editRecipe, currentRecipe, onClose }) => {
             placeholder="Seconds"
             value={seconds}
             onChange={(e) => setSeconds(e.target.value)}
-            className="w-1/3 p-2 border rounded text-[14px]"
+            className="w-1/3 p-1 border rounded text-[14px]"
           />
         </div>
       </div>

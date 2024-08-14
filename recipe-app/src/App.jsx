@@ -55,15 +55,15 @@ const App = () => {
 
   const editRecipe = async (updatedRecipe) => {
     const updatedRecipes = recipes.map((r) =>
-      r.name === editingRecipe.name ? updatedRecipe : r
+      r.postId === editingRecipe.postId ? { ...updatedRecipe, postId: editingRecipe.postId } : r
     );
     setRecipes(updatedRecipes);
     setEditingRecipe(null);
-
+  
     const username = 'admin';
     const password = 'CxVb 2pG4 FtUR ihJt R0TX cMMG';
     const credentials = btoa(`${username}:${password}`);
-
+  
     try {
       const response = await fetch(`http://laa-woo2.local/wp-json/wp/v2/posts/${editingRecipe.postId}`, {
         method: 'POST',
@@ -77,42 +77,45 @@ const App = () => {
           status: 'publish',
         }),
       });
-
+  
       if (!response.ok) {
         throw new Error('Failed to update recipe on WordPress');
       }
-
+  
       console.log('Recipe updated on WordPress!');
     } catch (error) {
       console.error('Error:', error);
     }
-  };
+  };  
 
   const deleteRecipe = async (recipe) => {
-    const updatedRecipes = recipes.filter((r) => r.name !== recipe.name);
+    const updatedRecipes = recipes.filter((r) => r.postId !== recipe.postId);
     setRecipes(updatedRecipes);
-
+    localStorage.setItem('recipes', JSON.stringify(updatedRecipes));
+  
     const username = 'admin';
     const password = 'CxVb 2pG4 FtUR ihJt R0TX cMMG';
     const credentials = btoa(`${username}:${password}`);
-
+  
     try {
       const response = await fetch(`http://laa-woo2.local/wp-json/wp/v2/posts/${recipe.postId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Basic ${credentials}`,
+          'Content-Type': 'application/json',
         },
       });
-
-      if (!response.ok) {
-        throw new Error('Failed to delete recipe from WordPress');
+  
+      if (response.ok) {
+        console.log('Recipe deleted from WordPress!');
+      } else {
+        const errorText = await response.text();
+        throw new Error(`Failed to delete recipe from WordPress. Status: ${response.status}, Error: ${errorText}`);
       }
-
-      console.log('Recipe deleted from WordPress!');
     } catch (error) {
       console.error('Error:', error);
     }
-  };
+  }; 
 
   return (
     <div className="container mx-auto p-4 flex justify-center space-x-4">

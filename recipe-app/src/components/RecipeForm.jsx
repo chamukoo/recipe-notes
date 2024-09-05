@@ -53,6 +53,14 @@ const RecipeForm = ({ addRecipe, editRecipe, currentRecipe, onClose }) => {
       await addRecipe(newRecipe);
     }
 
+    // Clear form fields after adding/editing the recipe
+    setName('');
+    setHours('');
+    setMinutes('');
+    setSeconds('');
+    setIngredients([{ name: '', price: '' }]);
+    setInstructions('');
+
     onClose();
   };
 

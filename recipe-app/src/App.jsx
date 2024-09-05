@@ -18,7 +18,8 @@ const App = () => {
   }, [recipes]);
 
   const addRecipe = async (recipe) => {
-    const newRecipes = [...recipes, recipe];
+    const newRecipe = { ...recipe, id: Date.now() }; // Assign unique id
+    const newRecipes = [...recipes, newRecipe];
     setRecipes(newRecipes);
 
     const username = 'admin';
@@ -44,7 +45,7 @@ const App = () => {
       }
 
       const result = await response.json();
-      const updatedRecipe = { ...recipe, postId: result.id };
+      const updatedRecipe = { ...newRecipe, postId: result.id };
       setRecipes([...newRecipes.slice(0, -1), updatedRecipe]);
 
       console.log('Recipe saved to WordPress!');
@@ -55,7 +56,7 @@ const App = () => {
 
   const editRecipe = async (updatedRecipe) => {
     const updatedRecipes = recipes.map((r) =>
-      r.postId === editingRecipe.postId ? { ...updatedRecipe, postId: editingRecipe.postId } : r
+      r.id === editingRecipe.id ? { ...updatedRecipe, id: editingRecipe.id } : r
     );
     setRecipes(updatedRecipes);
     setEditingRecipe(null);
@@ -86,36 +87,36 @@ const App = () => {
     } catch (error) {
       console.error('Error:', error);
     }
-  };  
+  };
 
-  const deleteRecipe = async (recipe) => {
-    const updatedRecipes = recipes.filter((r) => r.postId !== recipe.postId);
+  const deleteRecipe = async (id) => {
+    const recipeToDelete = recipes.find((recipe) => recipe.id === id);
+    const updatedRecipes = recipes.filter((r) => r.id !== id);
     setRecipes(updatedRecipes);
     localStorage.setItem('recipes', JSON.stringify(updatedRecipes));
-  
+
     const username = 'admin';
     const password = 'CxVb 2pG4 FtUR ihJt R0TX cMMG';
     const credentials = btoa(`${username}:${password}`);
-  
+
     try {
-      const response = await fetch(`http://laa-woo2.local/wp-json/wp/v2/posts/${recipe.postId}`, {
+      const response = await fetch(`http://laa-woo2.local/wp-json/wp/v2/posts/${recipeToDelete.postId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Basic ${credentials}`,
           'Content-Type': 'application/json',
         },
       });
-  
-      if (response.ok) {
-        console.log('Recipe deleted from WordPress!');
-      } else {
-        const errorText = await response.text();
-        throw new Error(`Failed to delete recipe from WordPress. Status: ${response.status}, Error: ${errorText}`);
+
+      if (!response.ok) {
+        throw new Error('Failed to delete recipe from WordPress');
       }
+
+      console.log('Recipe deleted from WordPress!');
     } catch (error) {
       console.error('Error:', error);
     }
-  }; 
+  };
 
   return (
     <div className="container mx-auto p-4 flex justify-center space-x-4">
@@ -134,7 +135,7 @@ const App = () => {
         <RecipeList
           recipes={recipes}
           onEdit={(recipe) => setEditingRecipe(recipe)}
-          onDelete={deleteRecipe}
+          onDelete={deleteRecipe} // Delete by id
         />
       </div>
     </div>

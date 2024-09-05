@@ -17,7 +17,7 @@ const RecipeList = ({ recipes, onEdit, onDelete }) => {
       <h2 className="text-2xl font-bold mb-4">Recipe List</h2>
       {recipes.length > 0 ? (
         recipes.map((recipe, index) => (
-          <div key={index} className="p-4 mb-4 border rounded-lg shadow-lg bg-white">
+          <div key={recipe.id} className="p-4 mb-4 border rounded-lg shadow-lg bg-white">
             <div className="flex justify-between items-center">
               <div>
                 <h3 className="text-xl font-semibold">{recipe.name}</h3>
@@ -26,11 +26,11 @@ const RecipeList = ({ recipes, onEdit, onDelete }) => {
               </div>
               <div className="flex space-x-2">
                 <AiFillEdit
-                  onClick={() => onEdit(recipe)}
+                  onClick={() => onEdit(recipe)} // Pass the entire recipe object
                   className="text-blue-500 cursor-pointer"
                 />
                 <AiFillDelete
-                  onClick={() => onDelete(recipe)}
+                  onClick={() => onDelete(recipe.id)} // Delete by recipe ID
                   className="text-red-500 cursor-pointer"
                 />
                 <button

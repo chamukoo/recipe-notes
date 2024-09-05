@@ -30,8 +30,37 @@ const RecipeForm = ({ addRecipe, editRecipe, currentRecipe, onClose }) => {
     setIngredients([...ingredients, { name: '', price: '' }]);
   };
 
+  const validateFields = () => {
+    if (!name.trim()) {
+      alert('Please enter the recipe name.');
+      return false;
+    }
+
+    if (!instructions.trim()) {
+      alert('Please provide the cooking instructions.');
+      return false;
+    }
+
+    for (let i = 0; i < ingredients.length; i++) {
+      if (!ingredients[i].name.trim()) {
+        alert(`Please enter the name for ingredient ${i + 1}.`);
+        return false;
+      }
+      if (!ingredients[i].price.trim() || isNaN(ingredients[i].price)) {
+        alert(`Please enter a valid price for ingredient ${i + 1}.`);
+        return false;
+      }
+    }
+
+    return true;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!validateFields()) {
+      return;
+    }
 
     const totalCost = ingredients.reduce((total, item) => {
       return total + parseFloat(item.price || 0);

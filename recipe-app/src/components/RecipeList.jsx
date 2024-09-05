@@ -5,15 +5,14 @@ const RecipeList = ({ recipes, onEdit, onDelete }) => {
   const [expandedIndex, setExpandedIndex] = useState(null);
 
   const toggleExpand = (index) => {
-    if (expandedIndex === index) {
-      setExpandedIndex(null);
-    } else {
-      setExpandedIndex(index);
-    }
+    setExpandedIndex(expandedIndex === index ? null : index);
   };
 
   return (
-    <div className="max-w-md mx-auto mt-1 p-4 border rounded-lg shadow-lg bg-white">
+    <div
+      className="max-w-md mx-auto mt-1 p-4 border rounded-lg shadow-lg bg-white"
+      style={{ maxHeight: '93vh', overflowY: 'auto' }} // Add scrolling when height exceeds 90vh
+    >
       <h2 className="text-2xl font-bold mb-4">Recipe List</h2>
       {recipes.length > 0 ? (
         recipes.map((recipe, index) => (
@@ -46,7 +45,9 @@ const RecipeList = ({ recipes, onEdit, onDelete }) => {
                 <h4 className="font-semibold">Ingredients:</h4>
                 <ul className="list-disc ml-5">
                   {recipe.ingredients.map((ingredient, idx) => (
-                    <li key={idx}>{ingredient.name} - ${ingredient.price}</li>
+                    <li key={idx}>
+                      {ingredient.name} - ${ingredient.price}
+                    </li>
                   ))}
                 </ul>
                 <h4 className="font-semibold mt-4">Instructions:</h4>
